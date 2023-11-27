@@ -272,6 +272,10 @@
     "id": "elasticsearch",
     "author": "jaylmiller"
   },
+  "ElasticsearchReader7": {
+    "id": "elasticsearch7",
+    "author": "luiselizondo"
+  },
   "SlackReader": {
     "id": "slack",
     "author": "jerryjliu"
