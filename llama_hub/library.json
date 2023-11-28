@@ -272,8 +272,8 @@
     "id": "elasticsearch",
     "author": "jaylmiller"
   },
-  "ElasticsearchReader7": {
-    "id": "elasticsearch7",
+  "ElasticsearchReaderRest": {
+    "id": "elasticsearch_rest",
     "author": "luiselizondo"
   },
   "SlackReader": {

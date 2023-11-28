@@ -10,7 +10,7 @@ from llama_index.readers.base import BaseReader
 from llama_index.readers.schema.base import Document
 
 
-class ElasticsearchReader7(BaseReader):
+class ElasticsearchReaderRest(BaseReader):
     """
     Read documents from an Elasticsearch/Opensearch index.
 
@@ -24,9 +24,10 @@ class ElasticsearchReader7(BaseReader):
 
     def __init__(self, endpoint: str, index: str, basic_auth: Optional[set] = None):
         """Initialize with parameters."""
-        from elasticsearch import Elasticsearch
+        import requests
 
-        self._es_client = Elasticsearch(endpoint, basic_auth=basic_auth)
+        self._post = requests.post
+        self._basic_auth = basic_auth
         self._index = index
         self._endpoint = endpoint
 
@@ -35,7 +36,6 @@ class ElasticsearchReader7(BaseReader):
         field: str,
         query: Optional[dict] = None,
         embedding_field: Optional[str] = None,
-        size: Optional[int] = 10,
     ) -> List[Document]:
         """Read data from the Elasticsearch index.
 
@@ -47,7 +47,6 @@ class ElasticsearchReader7(BaseReader):
             embedding_field (Optional[str]): If there are embeddings stored in
                 this index, this field can be used
                 to set the embedding field on the returned Document list.
-            size (Optional[int]): The size of document to retrieve from elastic
         Returns:
             List[Document]: A list of documents.
 
@@ -55,7 +54,16 @@ class ElasticsearchReader7(BaseReader):
         query = (
             query["query"] if query is not None else None
         )  # To remain backward compatible
-        res = self._es_client.search(index=self._index, query=query, size=size)
+
+        response = self._post(self._endpoint + "/" + self._index + "/_search", json=query)
+        if response.status_code != 200:
+            optional_detail = response.json().get("error")
+            raise ValueError(
+                f" Call failed with status code {response.status_code}."
+                f" Details: {optional_detail}"
+            )
+
+        res = response.json()
         documents = []
         for hit in res["hits"]["hits"]:
             value = hit["_source"][field]

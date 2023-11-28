@@ -11,9 +11,9 @@ Here's an example usage of the ElasticsearchReader to load 100 documents.
 ```python
 from llama_index import download_loader
 
-ElasticsearchReader7 = download_loader("ElasticsearchReader7")
+ElasticsearchReaderRest = download_loader("ElasticsearchReaderRest")
 
-reader = ElasticsearchReader7(
+reader = ElasticsearchReaderRest(
     "http://localhost:9200",
     index_name,
 )
